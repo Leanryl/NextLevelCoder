@@ -8,7 +8,7 @@ from utils.constants import (
     SCREEN_WIDTH,
     IMG_DIR
 )
-allowed_speed = list(range(3,7))
+allowed_speed = list(range(3,4))
 class Ball(pygame.sprite.Sprite):
     def __init__(self, size):
         pygame.sprite.Sprite.__init__(self)

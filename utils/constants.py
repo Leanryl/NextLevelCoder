@@ -13,3 +13,5 @@ BLUE = (0,0,255)
 YELLOW = (255,255,0)
 
 IMG_DIR = path.join(path.dirname(__file__), "..","img")
+
+POWERUP_TIME = 5000

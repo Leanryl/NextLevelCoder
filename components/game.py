@@ -1,5 +1,6 @@
 import pygame
-
+import random
+from components.power_up import Power_up
 from components.player import Player
 from components.ball import Ball
 from os import path
@@ -16,9 +17,9 @@ from utils.constants import(
 class Game:
 
     def __init__(self):
-        pygame.init() # aca se inicia el "juego"
-        pygame.display.set_caption(TITLE) # se muestra el titulo del juego
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)) # se configura el alto y ancho del juego
+        pygame.init()
+        pygame.display.set_caption(TITLE)
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.background_img = pygame.image.load(path.join(IMG_DIR, "spacefield.png")).convert()
         self.background_img = pygame.transform.scale(self.background_img, (SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
@@ -38,6 +39,7 @@ class Game:
     def create_components(self):
         self.all_sprites = pygame.sprite.Group()
         self.balls = pygame.sprite.Group()
+        self.powerups = pygame.sprite.Group()
         self.player = Player(self)
         self.all_sprites.add(self.player)
         ball = Ball(1)
@@ -46,6 +48,7 @@ class Game:
 
     def update(self):
         self.all_sprites.update()
+
         hits = pygame.sprite.spritecollide(self.player, self.balls, False)
         if hits:
             self.playing = False
@@ -56,6 +59,14 @@ class Game:
                     ball = Ball(hit.size + 1)
                     self.all_sprites.add(ball)
                     self.balls.add(ball)
+            if random.random() > 0.8:
+                pow = Power_up(hit.rect.center)
+                self.all_sprites.add(pow)
+                self.powerups.add(pow)
+        hits = pygame.sprite.spritecollide(self.player, self.powerups, True)
+        for hit in hits:
+            if hit.type == 'gun':
+                self.player.powerup()
 
     def events(self):
         for event in pygame.event.get():

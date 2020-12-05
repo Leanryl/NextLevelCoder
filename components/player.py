@@ -4,7 +4,8 @@ from utils.constants import (
     BLACK,
     SCREEN_HEIGHT,
     SCREEN_WIDTH,
-    IMG_DIR
+    IMG_DIR,
+    POWERUP_TIME
 )
 from components.bullet import Bullet
 
@@ -19,8 +20,14 @@ class Player(pygame.sprite.Sprite):
         self.rect.centerx = SCREEN_WIDTH/2
         self.rect.centery = SCREEN_HEIGHT - 10
         self.bullets = pygame.sprite.Group()
+        self.power = 1
+        self.power_time = pygame.time.get_ticks()
 
     def update(self):
+        if self.power >= 2 and pygame.time.get_ticks() - self.power_time > POWERUP_TIME:
+            self.power -= 1
+            self.power_time = pygame.time.get_ticks()
+
         self.movement_on_x = 10
         key = pygame.key.get_pressed()
         if key[pygame.K_RIGHT]:
@@ -31,7 +38,20 @@ class Player(pygame.sprite.Sprite):
             if self.rect.left < SCREEN_WIDTH and self.rect.left > 0:
                 self.rect.centerx -= 5
 
+    def powerup(self):
+        self.power += 1
+        self.power_time = pygame.time.get_ticks()
+
+
     def shoot(self):
-        bullet = Bullet(self.rect.centerx, self.rect.top)
-        self.game.all_sprites.add(bullet)
-        self.bullets.add(bullet)
+        if self.power == 1:
+            bullet = Bullet(self.rect.centerx, self.rect.top)
+            self.game.all_sprites.add(bullet)
+            self.bullets.add(bullet)
+        if self.power >= 2:
+            bullet1 = Bullet(self.rect.right, self.rect.centery)
+            bullet2 = Bullet(self.rect.left, self.rect.centery)
+            self.game.all_sprites.add(bullet1)
+            self.game.all_sprites.add(bullet2)
+            self.bullets.add(bullet1)
+            self.bullets.add(bullet2)
